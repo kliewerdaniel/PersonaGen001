@@ -11,6 +11,9 @@ from fastapi import FastAPI, HTTPException, Depends, UploadFile, File
 from pydantic import BaseModel, Field as PydanticField
 from sqlmodel import SQLModel, Field, create_engine, Session, select
 
+from fastapi.middleware.cors import CORSMiddleware
+
+
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "mistral:latest")
 DATABASE_URL = "sqlite:///personas.db"
@@ -18,6 +21,13 @@ DATABASE_URL = "sqlite:///personas.db"
 engine = create_engine(DATABASE_URL, echo=False)
 app = FastAPI(title="Persona JSON Generator API")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # -------------------------------
 # Database models
